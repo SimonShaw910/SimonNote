@@ -3,6 +3,8 @@ Node For Learn
 
 1. @RestController 和@Controller区别
 
+   相同点：都用来标识Spring的这个类可以接受http请求;
+   
    @RestController 相当于@Controller+@ResponseBody 只能返回json数据,配置的视图解析器 InternalResourceViewResolver不起作用;
    
    
