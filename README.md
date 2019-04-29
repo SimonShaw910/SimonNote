@@ -59,3 +59,46 @@ class proxy$A{
 事务分为声明式事务和注解类事务 
 
 https://img-blog.csdn.net/20180513091106639?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2I5eF9f/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70
+
+//接口
+interface Service {
+	void doNeedTx();
+	void doNotneedTx();
+}
+//目标类，实现接口
+class ServiceImpl implements Service {
+	@Transactional
+	    @Override
+	    public void doNeedTx() {
+		System.out.println("execute doNeedTx in ServiceImpl");
+	}
+	//no annotation here
+	@Override
+	    public void doNotneedTx() {
+		this.doNeedTx();
+	}
+}
+//代理类，也要实现相同的接口
+class ProxyByJdkDynamic implements Service {
+	//包含目标对象
+	private Service target;
+	public ProxyByJdkDynamic(Service target) {
+		this.target = target;
+	}
+	//目标类中此方法带注解，进行特殊处理
+	@Override
+	    public void doNeedTx() {
+		//开启事务
+		System.out.println("-> create Tx here in Proxy");
+		//调用目标对象的方法，该方法已在事务中了
+		target.doNeedTx();
+		//提交事务
+		System.out.println("<- commit Tx here in Proxy");
+	}
+	//目标类中此方法没有注解，只做简单的调用
+	@Override
+	    public void doNotneedTx() {
+		//直接调用目标对象方法
+		target.doNotneedTx();
+	}
+}
