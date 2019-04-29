@@ -57,3 +57,5 @@ class proxy$A{
 2.将需要事务的方法写入另外一个类来调用
 
 事务分为声明式事务和注解类事务 
+
+https://img-blog.csdn.net/20180513091106639?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2I5eF9f/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70
