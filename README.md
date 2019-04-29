@@ -26,4 +26,34 @@ Node For Learn
       
       b.字段有索引但是没有用到
       
-         
+  #关于事务
+   
+      
+@Service
+class A{
+    @Transactinal
+    method b(){...}
+    
+    method a(){    //标记1
+        b();
+    }
+}
+ 
+//Spring扫描注解后，创建了另外一个代理类，并为有注解的方法插入一个startTransaction()方法：
+class proxy$A{
+    A objectA = new A();
+    method b(){    //标记2
+        startTransaction();
+        objectA.b();
+    }
+ 
+    method a(){    //标记3
+        objectA.a();    //由于a()没有注解，所以不会启动transaction，而是直接调用A的实例的a()方法
+    }
+
+如果调用方法a，a没有注解，所以无法启动事务；（spring 在扫描bean的时候会扫描方法上是否包含@Transactional注解，如果包含，spring会为这个bean动态地生成一个子类（即代理类，proxy），代理类是继承原来那个bean的。此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在调用之前就会启动transaction。然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个bean，所以就不会启动transaction，我们看到的现象就是@Transactional注解无效。）
+解决办法：
+1.在类上加事务注解
+2.将需要事务的方法写入另外一个类来调用
+
+事务分为声明式事务和注解类事务
